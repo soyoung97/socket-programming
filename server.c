@@ -9,19 +9,19 @@ void caesar_transform(short op, char shift, char *data, size_t data_length){
     //shift is always valid.(0~25)
     int i;
     char letter;
-	if (op) {
-		shift = (26 - shift) % 26;
-	}
+    if (op) {
+        shift = (26 - shift) % 26;
+    }
     for (i=0; i < data_length; i++){
-    	letter = tolower(data[i]);
-	if ((97 <= letter) && (letter <= 122)){ //convert only for alphabet letters
-	    if ((letter + shift) > 122){
-		data[i] = (letter + shift) % 123 + 97;
-	    }
-	    else {
-		data[i] = letter + shift;
-	    }
-	}
+        letter = tolower(data[i]);
+    if ((97 <= letter) && (letter <= 122)){ //convert only for alphabet letters
+        if ((letter + shift) > 122){
+        data[i] = (letter + shift) % 123 + 97;
+        }
+        else {
+        data[i] = letter + shift;
+        }
+    }
     }
 }
 
@@ -35,18 +35,18 @@ struct packet
 };
 
 int validate_request(unsigned char op, unsigned char shift, unsigned int length){
-	//op validity check
+    //op validity check
     if (!((op == 0) || (op == 1))){
         return 0;
     }
     //transform to valid shift (should be 0~25)
     if (shift > 25){
-    	shift = shift % 26;
-	}
-	// reject if length > 10MB
-	if (length > 10000000) {
-		return 0;
-	}
+        shift = shift % 26;
+    }
+    // reject if length > 10MB
+    if (length > 10000000) {
+        return 0;
+    }
     return 1;
 }
 unsigned short make_checksum( unsigned short *temp, size_t cnt){
@@ -148,7 +148,7 @@ int main(int argc , char *argv[])
                     length = htobe32(header.length);
                     op = header.op;
                     checksum = ntohs(header.checksum);
-		    		shift = header.shift;
+                    shift = header.shift;
                 }
                 if(read_size == 0)
                 {
@@ -159,7 +159,7 @@ int main(int argc , char *argv[])
                     continue;
                 }
                 else if((read_size == -1) || (0 == validate_request(op, shift, length)))
-				{
+                {
                     close(selecti);
                     FD_CLR(selecti, &readfds);
                     continue;
@@ -175,10 +175,10 @@ int main(int argc , char *argv[])
                 read_size = length - sizeof(struct packet);
                 data_message[read_size] = '\0';
                 //Verify if length protocol is valid.
-				if (!(length - 8 == read_size)){
-					exit(-1);
-				}
-				//Verify if checksum is correct.
+                if (!(length - 8 == read_size)){
+                    exit(-1);
+                }
+                //Verify if checksum is correct.
                 unsigned int helper_checksum;
                 helper_checksum = 0;
 

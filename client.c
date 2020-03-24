@@ -9,7 +9,7 @@
 // Calculate checksum
 unsigned short make_checksum(unsigned short *temp, size_t cnt){
     unsigned short checksum;
-	size_t idx;
+    size_t idx;
     idx = 0;
     unsigned int template = 0;
     for(idx = 0; idx < (cnt / 2 + (cnt % 2)); idx ++){
@@ -21,21 +21,21 @@ unsigned short make_checksum(unsigned short *temp, size_t cnt){
 }
 
 unsigned char convert_valid_shift(int shift){
-	shift = shift % 26;
-	if (shift < 0){
-		shift += 26;
-	}
-	return (unsigned char)shift;
+    shift = shift % 26;
+    if (shift < 0){
+        shift += 26;
+    }
+    return (unsigned char)shift;
 }
 
 
 struct packet
 {
-	unsigned char op;
+    unsigned char op;
     unsigned char shift;
-	unsigned short checksum;
+    unsigned short checksum;
     unsigned int length;
-	char data[0];
+    char data[0];
 };
 
 //need to rotate for client....
@@ -57,35 +57,35 @@ int main(int argc , char *argv[])
     char *temp;
     unsigned int helper_checksum;
     short client_checksum;
-	char ipaddr_provided, port_provided, shift_provided, op_provided;
-	ipaddr_provided = 0;
-	port_provided = 0;
-	shift_provided = 0;
-	op_provided = 0;
-	while ((opt = getopt(argc, argv, "h:p:s:o:")) != -1)
+    char ipaddr_provided, port_provided, shift_provided, op_provided;
+    ipaddr_provided = 0;
+    port_provided = 0;
+    shift_provided = 0;
+    op_provided = 0;
+    while ((opt = getopt(argc, argv, "h:p:s:o:")) != -1)
         switch (opt) {
             case 'h' :
-				ipaddr_provided = 1;
+                ipaddr_provided = 1;
                 ipaddr = optarg;
                 break;
             case 'p' :
-				port_provided = 1;
+                port_provided = 1;
                 port = atoi(optarg);
                 break;
             case 's':
-				shift_provided = 1;
+                shift_provided = 1;
                 shift = atoi(optarg);
                 break;
             case 'o':
-				op_provided = 1;
+                op_provided = 1;
                 op = (char)atoi(optarg);
-				break;
-			default:
-				exit(-1);
+                break;
+            default:
+                exit(-1);
         }
-	if (!(ipaddr_provided && port_provided && shift_provided && op_provided)) {
-		exit(-1);
-	}
+    if (!(ipaddr_provided && port_provided && shift_provided && op_provided)) {
+        exit(-1);
+    }
     //Create socket
     sock = socket(AF_INET , SOCK_STREAM , 0);
     if (sock == -1)
@@ -113,12 +113,12 @@ int main(int argc , char *argv[])
        // Wrap all data nicely!!!
         struct packet* a = malloc(sizeof(struct packet) + read_byte);
         memset(a, 0 , sizeof(struct packet) + read_byte);
-		memcpy(a->data, buffer, read_byte);
+        memcpy(a->data, buffer, read_byte);
         if (read_byte < 1000000)
             a->data[read_byte] = 0;
-		a-> op = op;
+        a-> op = op;
         a-> shift = convert_valid_shift(shift);
-		a-> length = be32toh(read_byte + sizeof(struct packet));
+        a-> length = be32toh(read_byte + sizeof(struct packet));
         a-> checksum = 0;
         a-> checksum = ~(make_checksum((short*)a, sizeof(struct packet) + read_byte));
 
